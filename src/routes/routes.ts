@@ -10,7 +10,7 @@ router.get("/", (_req, res) => {
 
 router.use("/admin/auth", authRoutes);
 
-// Later you’ll do:
+// Later you’ll do:s
 // router.use('/admin/auth', authRoutes);
 // router.use('/car-rental', carRentalRoutes);
 
