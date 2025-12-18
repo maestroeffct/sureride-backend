@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authRoutes from "../modules/auth/auth.routes";
 
 const router = Router();
 
@@ -6,6 +7,8 @@ const router = Router();
 router.get("/", (_req, res) => {
   res.json({ ok: true, message: "SURERIDE Admin Backend API" });
 });
+
+router.use("/admin/auth", authRoutes);
 
 // Later you’ll do:
 // router.use('/admin/auth', authRoutes);
