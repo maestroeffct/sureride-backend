@@ -5,10 +5,13 @@ services:
     plan: starter
     region: frankfurt
     branch: main
+
     buildCommand: npm install && npm run build
     startCommand: npm run prisma:migrate && npm start
+
     healthCheckPath: /health
     autoDeploy: true
+
     envVars:
       - key: NODE_ENV
         value: production
@@ -17,7 +20,7 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: sureride-db
-          property: connectionString
+          property: internalConnectionString # 🔥 FIX
 
 databases:
   - name: sureride-db
