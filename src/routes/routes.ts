@@ -11,7 +11,6 @@ router.get("/", (_req, res) => {
 });
 
 router.use("/admin/auth", authRoutes);
-router.post("/logout", requireAdmin, logoutAdmin);
 
 // Later you’ll do:s
 // router.use('/admin/auth', authRoutes);
