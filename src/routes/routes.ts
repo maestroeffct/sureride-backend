@@ -1,5 +1,7 @@
 import { Router } from "express";
 import authRoutes from "../modules/auth/auth.routes";
+import { requireAdmin } from "../middlewares/requireAdmin";
+import { logoutAdmin } from "../modules/auth/auth.controller";
 
 const router = Router();
 
@@ -9,6 +11,7 @@ router.get("/", (_req, res) => {
 });
 
 router.use("/admin/auth", authRoutes);
+router.post("/logout", requireAdmin, logoutAdmin);
 
 // Later you’ll do:s
 // router.use('/admin/auth', authRoutes);

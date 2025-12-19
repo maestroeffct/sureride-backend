@@ -71,3 +71,11 @@ export function refreshAdminToken(req: Request, res: Response) {
 
   return res.json({ token });
 }
+
+export function logoutAdmin(_req: Request, res: Response) {
+  // Nothing to invalidate server-side for JWT
+  return res.json({
+    success: true,
+    message: "Logged out successfully",
+  });
+}
