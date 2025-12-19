@@ -48,28 +48,36 @@ export async function getAdminProfile(req: Request, res: Response) {
 
   const admin = await prisma.admin.findUnique({
     where: { id: adminId },
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      createdAt: true,
+    include: {
+      role: {
+        include: {
+          permissions: {
+            include: { permission: true },
+          },
+        },
+      },
     },
   });
 
-  return res.json({ admin });
+  if (!admin || !admin.role) {
+    return res.status(404).json({ message: "Admin not found" });
+  }
+
+  return res.json({
+    admin: {
+      id: admin.id,
+      email: admin.email,
+      role: admin.role.name,
+      permissions: admin.role.permissions.map((rp) => rp.permission.key),
+      createdAt: admin.createdAt,
+    },
+  });
 }
 
 export function refreshAdminToken(req: Request, res: Response) {
-  const admin = req.admin!;
-
-  const token = jwt.sign(
-    {
-      adminId: admin.id,
-      role: admin.role,
-    },
-    env.JWT_SECRET,
-    { expiresIn: "12h" }
-  );
+  const token = jwt.sign({ adminId: req.admin!.id }, env.JWT_SECRET, {
+    expiresIn: "12h",
+  });
 
   return res.json({ token });
 }
