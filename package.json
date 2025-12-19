@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "seed": "ts-node prisma/seed.ts",
-    "prisma:migrate": "prisma migrate deploy",
-    "prisma:generate": "prisma generate"
-  },
+  "dev": "ts-node-dev --respawn src/server.ts",
+  "postinstall": "npx prisma generate",
+  "build": "npx prisma generate && tsc",
+  "start": "node dist/server.js",
+  "seed": "ts-node prisma/seed.ts",
+  "prisma:migrate": "prisma migrate deploy"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
