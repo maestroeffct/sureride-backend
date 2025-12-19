@@ -15,6 +15,7 @@ app.use(
       "http://localhost:3000", // local admin dashboard
       "https://sureride-dashboard.vercel.app", // production dashboard (example)
     ],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
