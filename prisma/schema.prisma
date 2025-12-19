@@ -8,15 +8,44 @@ generator client {
 }
 
 model Admin {
-  id        String    @id @default(uuid())
-  email     String    @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   password  String
-  role      AdminRole @default(SUPER_ADMIN)
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
+
+  roleId    String?
+  role      Role?     @relation(fields: [roleId], references: [id])
 }
 
-enum AdminRole {
-  SUPER_ADMIN
-  OPS
-  FINANCE
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  admins      Admin[]
+  permissions RolePermission[]
 }
+
+model Permission {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles       RolePermission[]
+}
+
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+   @@index([permissionId])
+}
+

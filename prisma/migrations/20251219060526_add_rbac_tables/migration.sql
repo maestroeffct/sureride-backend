@@ -1,13 +1,15 @@
--- CreateTable
-CREATE TABLE "Admin" (
-    "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "roleId" TEXT,
+/*
+  Warnings:
 
-    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
-);
+  - You are about to drop the column `role` on the `Admin` table. All the data in the column will be lost.
+
+*/
+-- AlterTable
+ALTER TABLE "Admin" DROP COLUMN "role",
+ADD COLUMN     "roleId" TEXT;
+
+-- DropEnum
+DROP TYPE "AdminRole";
 
 -- CreateTable
 CREATE TABLE "Role" (
@@ -39,13 +41,13 @@ CREATE TABLE "RolePermission" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Permission_key_key" ON "Permission"("key");
+
+-- CreateIndex
+CREATE INDEX "RolePermission_permissionId_idx" ON "RolePermission"("permissionId");
 
 -- AddForeignKey
 ALTER TABLE "Admin" ADD CONSTRAINT "Admin_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -55,4 +57,3 @@ ALTER TABLE "RolePermission" ADD CONSTRAINT "RolePermission_roleId_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "RolePermission" ADD CONSTRAINT "RolePermission_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
