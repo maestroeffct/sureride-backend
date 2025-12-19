@@ -6,7 +6,19 @@ import { health } from "./health";
 
 const app = express();
 
-app.use(cors());
+/**
+ * CORS CONFIG
+ */
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000", // local admin dashboard
+      "https://sureride-dashboard.vercel.app", // production dashboard (example)
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(helmet());
 app.use(express.json());
 

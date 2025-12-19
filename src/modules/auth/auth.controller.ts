@@ -40,3 +40,34 @@ export async function loginAdmin(req: Request, res: Response) {
     },
   });
 }
+
+export async function getAdminProfile(req: Request, res: Response) {
+  const adminId = req.admin!.id;
+
+  const admin = await prisma.admin.findUnique({
+    where: { id: adminId },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  return res.json({ admin });
+}
+
+export function refreshAdminToken(req: Request, res: Response) {
+  const admin = req.admin!;
+
+  const token = jwt.sign(
+    {
+      adminId: admin.id,
+      role: admin.role,
+    },
+    env.JWT_SECRET,
+    { expiresIn: "12h" }
+  );
+
+  return res.json({ token });
+}
