@@ -76,7 +76,7 @@ export async function getAdminProfile(req: Request, res: Response) {
 
 export function refreshAdminToken(req: Request, res: Response) {
   const token = jwt.sign({ adminId: req.admin!.id }, env.JWT_SECRET, {
-    expiresIn: "12h",
+    expiresIn: "1h",
   });
 
   return res.json({ token });
