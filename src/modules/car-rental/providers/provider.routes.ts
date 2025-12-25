@@ -11,6 +11,8 @@ import {
 
 import { requireAdmin } from "../../../common/guards/requireAdmin";
 import { requirePermission } from "../../../common/guards/requirePermission";
+import { upload } from "../../../common/upload/multer";
+import { uploadProviderDocuments } from "./provider.upload";
 
 const router = Router();
 
@@ -33,6 +35,16 @@ router.post(
   "/:id/reject",
   requirePermission("approve_providers"),
   rejectProvider
+);
+router.post(
+  "/:id/documents",
+  requireAdmin,
+  requirePermission("manage_rentals"),
+  upload.fields([
+    { name: "businessCert", maxCount: 1 },
+    { name: "idDocument", maxCount: 1 },
+  ]),
+  uploadProviderDocuments
 );
 
 export default router;
