@@ -7,7 +7,7 @@ async function main() {
   const email = "admin@sureride.com";
   const password = "admin123456";
 
-  // 1️⃣ Create SUPER_ADMIN role
+  // 1️⃣ SUPER ADMIN ROLE
   const superAdminRole = await prisma.role.upsert({
     where: { name: "SUPER_ADMIN" },
     update: {},
@@ -18,26 +18,40 @@ async function main() {
     },
   });
 
-  // 2️⃣ Define permissions
+  // 2️⃣ PERMISSIONS
   const permissions = [
+    // Core admin
     "admin.users.read",
     "admin.users.write",
     "admin.roles.read",
     "admin.roles.write",
     "admin.permissions.read",
     "admin.permissions.write",
-    "payments.view",
+
+    // System
     "settings.manage",
+    "payments.view",
+
+    // 🚗 Rental module
+    "rental.providers.view",
+    "rental.providers.create",
+    "rental.providers.update",
+    "rental.providers.submit",
+    "rental.providers.approve",
+
+    "rental.cars.view",
+    "rental.cars.create",
+    "rental.cars.update",
+    "rental.cars.approve",
   ];
 
-  // 3️⃣ Create permissions & link to role
   for (const key of permissions) {
     const permission = await prisma.permission.upsert({
       where: { key },
       update: {},
       create: {
         key,
-        description: key.split(".").join(" "),
+        description: key.replace(/\./g, " "),
       },
     });
 
@@ -56,15 +70,15 @@ async function main() {
     });
   }
 
-  // 4️⃣ Create admin user if not exists
-  let admin = await prisma.admin.findUnique({
+  // 3️⃣ Create SUPER ADMIN USER
+  const existingAdmin = await prisma.admin.findUnique({
     where: { email },
   });
 
-  if (!admin) {
+  if (!existingAdmin) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    admin = await prisma.admin.create({
+    await prisma.admin.create({
       data: {
         email,
         password: hashedPassword,
@@ -72,25 +86,22 @@ async function main() {
       },
     });
 
-    console.log("SUPER_ADMIN admin created");
-  } else if (!admin.roleId) {
-    // Safety: assign role if admin existed without one
+    console.log("✅ SUPER_ADMIN created");
+  } else if (!existingAdmin.roleId) {
     await prisma.admin.update({
-      where: { id: admin.id },
-      data: {
-        roleId: superAdminRole.id,
-      },
+      where: { id: existingAdmin.id },
+      data: { roleId: superAdminRole.id },
     });
 
-    console.log("SUPER_ADMIN role assigned to existing admin");
-  } else {
-    console.log("Admin already exists");
+    console.log("✅ SUPER_ADMIN role assigned");
   }
+
+  console.log("✅ Seed completed successfully");
 }
 
 main()
-  .catch((err) => {
-    console.error("Seeding failed:", err);
+  .catch((e) => {
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

@@ -18,28 +18,45 @@ const router = Router();
 
 router.use(requireAdmin);
 
-// CRUD
-router.post("/", requirePermission("manage_rentals"), createProvider);
-router.get("/", requirePermission("view_rentals"), listProviders);
-router.get("/:id", requirePermission("view_rentals"), getProvider);
-router.patch("/:id", requirePermission("manage_rentals"), updateProvider);
+// CREATE
+router.post("/", requirePermission("rental.providers.create"), createProvider);
 
-// Workflow
-router.post("/:id/submit", requirePermission("manage_rentals"), submitProvider);
+// READ
+router.get("/", requirePermission("rental.providers.view"), listProviders);
+
+router.get("/:id", requirePermission("rental.providers.view"), getProvider);
+
+// UPDATE
+router.patch(
+  "/:id",
+  requirePermission("rental.providers.update"),
+  updateProvider
+);
+
+// SUBMIT
+router.post(
+  "/:id/submit",
+  requirePermission("rental.providers.submit"),
+  submitProvider
+);
+
+// APPROVE / REJECT
 router.post(
   "/:id/approve",
-  requirePermission("approve_providers"),
+  requirePermission("rental.providers.approve"),
   approveProvider
 );
+
 router.post(
   "/:id/reject",
-  requirePermission("approve_providers"),
+  requirePermission("rental.providers.approve"),
   rejectProvider
 );
+
+// DOCUMENT UPLOAD
 router.post(
   "/:id/documents",
-  requireAdmin,
-  requirePermission("manage_rentals"),
+  requirePermission("rental.providers.update"),
   upload.fields([
     { name: "businessCert", maxCount: 1 },
     { name: "idDocument", maxCount: 1 },
