@@ -1,11 +1,11 @@
 import { Router } from "express";
 import {
-  getAdminProfile,
   loginAdmin,
-  logoutAdmin,
+  getAdminProfile,
   refreshAdminToken,
+  logoutAdmin,
 } from "./auth.controller";
-import { requireAdmin } from "../../middlewares/requireAdmin";
+import { requireAdmin } from "../../common/guards/requireAdmin";
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import authRoutes from "../modules/auth/auth.routes";
-import { requireAdmin } from "../middlewares/requireAdmin";
+import { requireAdmin } from "../common/guards/requireAdmin";
 import { logoutAdmin } from "../modules/auth/auth.controller";
 
 const router = Router();

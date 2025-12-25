@@ -49,3 +49,179 @@ model RolePermission {
    @@index([permissionId])
 }
 
+
+enum ModelRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+
+model Provider {
+  id            String   @id @default(uuid())
+  businessName  String
+  businessType  String?
+  email         String   @unique
+  phone         String?
+
+  status        ProviderStatus @default(DRAFT)
+
+  contact       ProviderContact?
+  location      ProviderLocation?
+  documents     ProviderDocument?
+  finance       ProviderFinance?
+
+  cars          Car[]
+  modelRequests CarModelRequest[]  
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
+
+model ProviderContact {
+  id           String @id @default(uuid())
+  providerId   String @unique
+
+  fullName     String
+  role         String?
+  email        String
+  phone        String
+
+  provider     Provider @relation(fields: [providerId], references: [id])
+}
+
+
+model ProviderLocation {
+  id         String @id @default(uuid())
+  providerId String @unique
+
+  country    String
+  state      String
+  city       String
+
+  provider   Provider @relation(fields: [providerId], references: [id])
+}
+
+
+model ProviderDocument {
+  id            String @id @default(uuid())
+  providerId    String @unique
+
+  businessCert  String
+  idDocument    String
+
+  verified      Boolean  @default(false)
+
+  provider      Provider @relation(fields: [providerId], references: [id])
+}
+
+
+model ProviderFinance {
+  id             String @id @default(uuid())
+  providerId     String @unique
+
+  bankName       String
+  accountName    String
+  accountNumber  String
+  currency       String
+
+  payoutSchedule String
+  commissionRate Float
+
+  provider       Provider @relation(fields: [providerId], references: [id])
+}
+
+
+
+model CarCategory {
+  id              String   @id @default(uuid())
+  name            String   @unique
+  pricingFactor   Float?   // e.g. 1.2
+  isActive        Boolean  @default(true)
+
+  models          CarModel[]
+  cars            Car[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+
+model CarBrand {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  logoUrl   String?
+  isActive  Boolean  @default(true)
+
+  models    CarModel[]
+  cars      Car[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model CarModel {
+  id          String   @id @default(uuid())
+  name        String
+  brandId     String
+  categoryId  String?
+  isActive    Boolean  @default(true)
+
+  brand       CarBrand     @relation(fields: [brandId], references: [id])
+  category    CarCategory? @relation(fields: [categoryId], references: [id])
+  cars        Car[]
+
+  @@unique([name, brandId])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model CarModelRequest {
+  id          String   @id @default(uuid())
+  providerId  String
+  brandName   String
+  modelName   String
+  yearFrom    Int?
+  yearTo      Int?
+  status      ModelRequestStatus @default(PENDING)
+  adminNote   String?
+
+  provider    Provider @relation(fields: [providerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  reviewedAt  DateTime?
+}
+
+
+model Car {
+  id          String   @id @default(uuid())
+  providerId  String
+  categoryId  String
+  brandId     String
+  modelId     String
+  year        Int
+
+  isLive      Boolean  @default(false)
+  isPaused    Boolean  @default(false)
+
+  provider    Provider    @relation(fields: [providerId], references: [id])
+  category    CarCategory @relation(fields: [categoryId], references: [id])
+  brand       CarBrand    @relation(fields: [brandId], references: [id])
+  model       CarModel    @relation(fields: [modelId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+
+
+enum ProviderStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
