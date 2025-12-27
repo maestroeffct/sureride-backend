@@ -2,6 +2,7 @@ import { Router } from "express";
 import authRoutes from "../modules/auth/auth.routes";
 import { requireAdmin } from "../common/guards/requireAdmin";
 import { logoutAdmin } from "../modules/auth/auth.controller";
+import adminRoutes from "../modules/admin/admin.routes";
 
 const router = Router();
 
@@ -12,8 +13,9 @@ router.get("/", (_req, res) => {
 
 router.use("/admin/auth", authRoutes);
 
-// Later you’ll do:s
-// router.use('/admin/auth', authRoutes);
-// router.use('/car-rental', carRentalRoutes);
+// ADMIN ROUTES
+router.use("/admin", adminRoutes);
 
+// CAR RENTAL ROUTES
+router.use("/car-rental");
 export default router;
