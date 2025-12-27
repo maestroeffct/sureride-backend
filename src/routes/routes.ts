@@ -3,6 +3,7 @@ import authRoutes from "../modules/auth/auth.routes";
 import { requireAdmin } from "../common/guards/requireAdmin";
 import { logoutAdmin } from "../modules/auth/auth.controller";
 import adminRoutes from "../modules/admin/admin.routes";
+import carRentalRoutes from "../modules/car-rental";
 
 const router = Router();
 
@@ -17,5 +18,5 @@ router.use("/admin/auth", authRoutes);
 router.use("/admin", adminRoutes);
 
 // CAR RENTAL ROUTES
-router.use("/car-rental");
+router.use("/car-rental/providers", carRentalRoutes);
 export default router;
